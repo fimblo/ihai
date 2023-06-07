@@ -48,7 +48,7 @@ fi
 # --------------------------------------------------
 # If started in list-mode, then list all ideas created by ihai
 if [[ "$list_mode" ]] ; then
-  jira list -q"labels in ($LABEL) and created >= -30d order by created DESC" -t table
+  jira list -q"labels in ($LABEL) and status not in (Done) order by created DESC" -t table
   exit $?
 fi
 
