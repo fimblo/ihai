@@ -37,10 +37,20 @@ cat<<-EOF
 	
 	Config file created at ${JIRA_CONFIG}.
 	---
-	Now head to the url below and obtain your API TOKEN.
-	https://id.atlassian.com/manage-profile/security/api-tokens
 	
-	When you have it, run the command 'jira session' and paste the token
-	when prompted.
+	
+	You now have two remaining things to do:
+	
+	1. Get your API TOKEN
+	   Now head to the url below and obtain your API TOKEN.
+	   https://id.atlassian.com/manage-profile/security/api-tokens
+	   
+	   When you have it, run the command 'jira session' and paste the token
+	   when prompted.
+	
+	2. (Optional) Add ihai to your PATH
+	   This if you want to be able to run it from anywhere in the filesystem.
+	
+	All done!
 	EOF
 exit 0
