@@ -34,7 +34,11 @@ fi
 
 
 # --------------------------------------------------
-# If config isn't found, re-run in setup mode
+# Sanity checks
+if ! which jira > /dev/null 2>&1 ; then
+  echo "Can't find jira in PATH."
+  exit 1
+fi
 if ! [[ -e $JIRA_CONFIG ]] ; then
   echo "go-jira configuration not found."
   exit $?
