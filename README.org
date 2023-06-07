@@ -29,6 +29,8 @@ The script does not require escalated privileges.
 ** Running
 Here are the two main supported use-cases of =ihai= as of the time of writing. Running =ihai --help= should give you the rest.
 
+It's good to know that =ihai= will always use a special label to distinguish its tickets in Jira. By default, the label is =Idea=. So all tickets created or listed by =ihai= will use that label.
+
 *** Create a ticket
 =ihai= expects the ticket summary as commandline arguments. The ticket description is expected to be entered as STDIN.
 #+begin_src 
