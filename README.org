@@ -1,4 +1,4 @@
-* ihai
+* ihai - I have an Idea!
 ** Overview
 So you're hacking away, and realise that you need to refactor some code. But it's not in the path of what you're actually working on. When this happens to me, I often find myself faced with a very small decision - which drops me out of my zone:
 - Do I open a browser and create a ticket, risking distractions and losing flow entirely?
