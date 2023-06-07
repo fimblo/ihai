@@ -27,6 +27,8 @@ It's an interactive script, and it will ask you for the following info after you
 The script does not require escalated privileges.
 
 ** Running
+Here are the two main supported use-cases of =ihai= as of the time of writing. Running =ihai --help= should give you the rest.
+
 *** Create a ticket
 =ihai= expects the ticket summary as commandline arguments. The ticket description is expected to be entered as STDIN.
 #+begin_src 
