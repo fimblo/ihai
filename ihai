@@ -19,7 +19,6 @@ if [[ "$1" == '--help' || "$1" == '-h'  ]] ; then
 	  -h | --help     This help message
 	  -l | --list     List all ihai tickets
 	  -n | --noedit   Do not edit the ticket description in your EDITOR
-	  --setup         Set up go-jira
 	
 	EOF
   exit 0
@@ -31,48 +30,6 @@ elif [[ "$1" == '--list' || "$1" == '-l' ]] ; then
 elif [[ "$1" == '--noedit' || "$1" == '-n' ]] ; then
   no_edit='--noedit'
   shift
-
-elif [[ "$1" == '--setup' ]] ; then
-  echo "Setting up go-jira. Press enter to continue, ctrl-c to abort."
-  read
-  if ! which jira > /dev/null 2>&1 ; then
-    cat<<-EOF
-	Install go-jira first before running this script.
-	https://github.com/go-jira/jira
-	EOF
-    exit 0
-  fi
-
-  read -p 'Jira endpoint: '
-  JIRA_ENDPOINT="$REPLY"
-  read -p 'Jira username: '
-  JIRA_USER="$REPLY"
-  read -p 'Default Jira project (press enter to skip): '
-  [[ "$REPLY" ]] && JIRA_PROJECT="project: $REPLY"
-
-  mkdir -p $(dirname $JIRA_CONFIG)
-  [[ -e $JIRA_CONFIG ]] && mv $JIRA_CONFIG ${JIRA_CONFIG}.bk
-
-  cat <<-EOF > $JIRA_CONFIG
-	# Config created by $ME
-	# $(date)
-	endpoint: $JIRA_ENDPOINT
-	user: $JIRA_USER
-	password-source: keyring
-	$JIRA_PROJECT
-	EOF
-
-  cat<<-EOF
-	
-	Config file created at ${JIRA_CONFIG}.
-	---
-	Now head to the url below and obtain your API TOKEN.
-	https://id.atlassian.com/manage-profile/security/api-tokens
-	
-	When you have it, run the command 'jira session' and paste the token
-	when prompted.
-	EOF
-  exit 0
 fi
 
 
@@ -80,7 +37,6 @@ fi
 # If config isn't found, re-run in setup mode
 if ! [[ -e $JIRA_CONFIG ]] ; then
   echo "go-jira configuration not found."
-  $0 --setup
   exit $?
 fi
 
