@@ -1,0 +1,122 @@
+#!/bin/bash
+# ihai - I have an idea! Create Jira ticket
+#
+# Note: If the script doesn't run: the here-docs expect each line to
+# start with a tab. Your editor might have converted them to spaces.
+
+ME=$(basename $0)
+JIRA_CONFIG=$HOME/.jira.d/config.yml
+
+
+if [[ "$1" == '--help' || "$1" == '-h'  ]] ; then
+  cat<<-EOF
+	$ME - I have an idea! Create Jira ticket.
+	
+	usage: $ME [options] <Jira ticket title>
+	Ticket description taken from STDIN
+	
+	Options:
+	  -h | --help     This help message
+	  -l | --list     List all ihai tickets
+	  -n | --noedit   Do not edit the ticket description in your EDITOR
+	  --setup         Set up go-jira
+	
+	EOF
+  exit 0
+
+elif [[ "$1" == '--list' || "$1" == '-l' ]] ; then
+  list_mode=true
+  shift
+
+elif [[ "$1" == '--noedit' || "$1" == '-n' ]] ; then
+  no_edit='--noedit'
+  shift
+
+elif [[ "$1" == '--setup' ]] ; then
+  echo "Setting up go-jira. Press enter to continue, ctrl-c to abort."
+  read
+  if ! which jira > /dev/null 2>&1 ; then
+    cat<<-EOF
+	Install go-jira first before running this script.
+	https://github.com/go-jira/jira
+	EOF
+    exit 0
+  fi
+
+  read -p 'Jira endpoint: '
+  JIRA_ENDPOINT="$REPLY"
+  read -p 'Jira username: '
+  JIRA_USER="$REPLY"
+  read -p 'Default Jira project (press enter to skip): '
+  [[ "$REPLY" ]] && JIRA_PROJECT="project: $REPLY"
+
+  mkdir -p $(dirname $JIRA_CONFIG)
+  [[ -e $JIRA_CONFIG ]] && mv $JIRA_CONFIG ${JIRA_CONFIG}.bk
+
+  cat <<-EOF > $JIRA_CONFIG
+	# Config created by $ME
+	# $(date)
+	endpoint: $JIRA_ENDPOINT
+	user: $JIRA_USER
+	password-source: keyring
+	$JIRA_PROJECT
+	EOF
+
+  cat<<-EOF
+	
+	Config file created at ${JIRA_CONFIG}.
+	---
+	Now head to the url below and obtain your API TOKEN.
+	https://id.atlassian.com/manage-profile/security/api-tokens
+	
+	When you have it, run the command 'jira session' and paste the token
+	when prompted.
+	EOF
+  exit 0
+fi
+
+
+# --------------------------------------------------
+# If config isn't found, re-run in setup mode
+if ! [[ -e $JIRA_CONFIG ]] ; then
+  echo "go-jira configuration not found."
+  $0 --setup
+  exit $?
+fi
+
+
+# --------------------------------------------------
+# If started in list-mode, then list all ideas created by ihai
+if [[ "$list_mode" ]] ; then
+  jira list -q'labels in (Idea) and created >= -30d order by created DESC' -t table
+  exit $?
+fi
+
+
+
+# --------------------------------------------------
+# Create ticket
+summary="$*"
+if [[ -z "$summary" ]] ; then
+  $0 --help
+  echo "--------------------"
+  echo "Missing ticket title."
+  exit 1;
+fi
+
+echo "Please enter a description, and exit with ctrl-d."
+description=$(cat)
+
+echo ">> Creating ticket:"
+jira create $no_edit                       \
+     --issuetype=Task                      \
+     --override="summary:$summary"         \
+     --override="description:$description" 
+[[ "$?" -ne 0 ]] && exit $?
+
+# --------------------------------------------------
+# Label ticket
+echo ">> Labelling ticket as an 'Idea':"
+issue=$(jira list --limit=1 --sort='issue desc' | cut -d: -f1)
+jira labels set $issue Idea
+exit $?
