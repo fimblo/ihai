@@ -43,6 +43,10 @@ _gojira_is_set_up () {
 
 
 # GO-JIRA
+jbacklog () {
+  _gojira_is_set_up && \
+    jira list -q "$GOJIRA_RUN_PREFIX and status = 'Backlog'"
+}
 jtodo () {
   _gojira_is_set_up && \
     jira list -q "$GOJIRA_RUN_PREFIX and status = 'To do'"
