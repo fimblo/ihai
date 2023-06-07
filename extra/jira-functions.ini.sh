@@ -1,4 +1,19 @@
 # This bash code is intended to be sourced, not run.
+#
+# You might need to change some things for it to work for you. Places
+# to check:
+#
+# - The board I work in follows the Kanban flow. This _should_ work
+#   even if yours is a scrum board, but I haven't tested it.
+#
+# - The default ticket types. The ones I'm interested in are Task,
+#   Bug, and Story, and they are set in the variable
+#   GOJIRA_RUN_PREFIX. Change to fit your tickets of choice.
+#
+# - The default statuses. The ones I have in my Jira workflow are:
+#   'Backlog', 'To do', 'In Progress', 'Review & QA', 'Done'. You can
+#   see them in the shell functions prefixed with 'j' below. Change as
+#   you see fit.
 
 GOJIRA_BASE=$HOME/.jira.d
 GOJIRA_CONFIG=$GOJIRA_BASE/config.yml
