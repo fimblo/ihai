@@ -1,2 +1,53 @@
 * ihai
-cli toward jira
+** Overview
+So you're hacking away, and realise that you need to refactor some code. But it's not in the path of what you're actually working on. When this happens to me, I often find myself faced with a very small decision - which drops me out of my zone:
+- Do I open a browser and create a ticket, risking distractions and losing flow entirely?
+- Do I add a TODO in the code, making it a tiny bit uglier?
+- Do I just hope to remember that this needs to be done, knowing deep inside that I will forget?
+
+=ihai= is a small script which helps developers note these things without losing too much flow.
+
+** Dependencies
+- bash
+- =go-jira= from https://github.com/go-jira/jira.
+
+If you're on a mac, you can install go-jira using homebrew:
+#+begin_src shell
+  brew install go-jira
+#+end_src
+
+** Installing
+The script =install.sh= should help you get things running.
+
+It's an interactive script, and it will ask you for the following info after you run it.
+- Your Jira endpoint. It should look something like: =https://YOUR_ORG.atlassian.net=.
+- Your Jira username. It should look like an email address.
+- Your default Jira project. (Optional)
+
+The script does not require escalated privileges.
+
+** Running
+*** Create a ticket
+=ihai= expects the ticket summary as commandline arguments. The ticket description is expected to be entered as STDIN.
+#+begin_src 
+  $ ihai This is a test ticket
+  Please enter a description, and exit with ctrl-d.
+  This is my ticket. Yay
+  >> Creating ticket:
+   OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
+  >> Labelling ticket as an 'Idea':
+  OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
+#+end_src
+
+*** List all tickets created by ihai
+#+begin_src
+  $ ihai -l
+#+end_src
+This will output all existing ihai tickets which are not Done.
+
+** Configuring
+By default, =ihai= creates tickets with the label 'Idea'. If you want to change this, export an environment variable with your desired label, like so.
+#+begin_src
+  $ export IHAI_LABEL=MyLabel
+#+end_src
+You might want to add this to your profile so that it applies in the future.
