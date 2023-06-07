@@ -1,2 +1,2 @@
-# ihai
+* ihai
 cli toward jira
