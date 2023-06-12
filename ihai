@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ihai - I have an idea! Create Jira ticket
 #
 # Note: If the script doesn't run: the here-docs expect each line to
