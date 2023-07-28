@@ -6,9 +6,10 @@
 
 ME=$(basename $0)
 JIRA_CONFIG=$HOME/.jira.d/config.yml
-LABEL=${IHAI_LABEL:=Idea}
+IHAI_LABEL='ihai'
 
-if [[ "$1" == '--help' || "$1" == '-h'  ]] ; then
+
+usage() {
   cat<<-EOF
 	$ME - I have an idea! Create Jira ticket.
 	
@@ -16,22 +17,19 @@ if [[ "$1" == '--help' || "$1" == '-h'  ]] ; then
 	Ticket description taken from STDIN
 	
 	Options:
-	  -h | --help     This help message
-	  -l | --list     List all ihai tickets
-	  -n | --noedit   Do not edit the ticket description in your EDITOR
+	  -h    This help message
+	  -l    List all ihai tickets
+	  -L    Add additional labels (quoted space separated)
+	  -n    Do not edit the ticket description in your EDITOR
 	
 	EOF
-  exit 0
+  exit $1
+}
 
-elif [[ "$1" == '--list' || "$1" == '-l' ]] ; then
-  list_mode=true
-  shift
-
-elif [[ "$1" == '--noedit' || "$1" == '-n' ]] ; then
-  no_edit='--noedit'
-  shift
-fi
-
+list_tickets_then_exit() {
+  jira list -q"labels in ($IHAI_LABEL) and status not in (Done) order by created DESC" -t table ;
+  exit $?
+}
 
 # --------------------------------------------------
 # Sanity checks
@@ -46,24 +44,32 @@ fi
 
 
 # --------------------------------------------------
-# If started in list-mode, then list all ideas created by ihai
-if [[ "$list_mode" ]] ; then
-  jira list -q"labels in ($LABEL) and status not in (Done) order by created DESC" -t table
-  exit $?
-fi
-
+# Parse arguments
+while getopts 'L:hln' tag ; do
+  case $tag in
+    l) list_tickets_then_exit     ;; # list ihai tickets in Jira
+    n) no_edit='--noedit'         ;; # run without opening editor
+    L) ADDITIONAL_LABEL="$OPTARG" ;; # add additional labels
+    h) usage 0                    ;;
+   \?) usage 1                    ;;
+  esac
+done
 
 
 # --------------------------------------------------
-# Create ticket
+# Get ticket summary
+shift $(( $OPTIND - 1 ))
 summary="$*"
 if [[ -z "$summary" ]] ; then
-  $0 --help
+  $0 -h
   echo "--------------------"
   echo "Missing ticket title."
   exit 1;
 fi
 
+
+# --------------------------------------------------
+# Get description
 echo "Please enter a description, and exit with ctrl-d."
 description=$(cat)
 
@@ -71,12 +77,14 @@ echo ">> Creating ticket:"
 jira create $no_edit                       \
      --issuetype=Task                      \
      --override="summary:$summary"         \
-     --override="description:$description" 
+     --override="description:$description"
 [[ "$?" -ne 0 ]] && exit $?
+
 
 # --------------------------------------------------
 # Label ticket
-echo ">> Labelling ticket as an '$LABEL':"
+LABEL="$IHAI_LABEL $ADDITIONAL_LABEL"
+echo ">> Labelling ticket as '$LABEL':"
 issue=$(jira list --limit=1 --sort='issue desc' | cut -d: -f1)
 jira labels set $issue $LABEL
 exit $?

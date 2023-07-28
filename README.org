@@ -27,9 +27,6 @@ It's an interactive script, and it will ask you for the following info after you
 The script does not require escalated privileges.
 
 ** Running
-Here are the two main supported use-cases of =ihai= as of the time of writing. Running =ihai --help= should give you the rest.
-
-It's good to know that =ihai= will always use a special label to distinguish its tickets in Jira. By default, the label is =Idea=. So all tickets created or listed by =ihai= will use that label.
 
 *** Create a ticket
 =ihai= expects the ticket summary as commandline arguments. The ticket description is expected to be entered as STDIN. Before it submits the ticket, go-jira will start your default editor so you can eyeball/edit everything. If this annoys you, you can start =ihai= with the =-n= flag.
@@ -40,9 +37,14 @@ It's good to know that =ihai= will always use a special label to distinguish its
   This is my ticket. Yay
   >> Creating ticket:
    OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
-  >> Labelling ticket as an 'Idea':
+  >> Labelling ticket as an 'ihai':
   OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
 #+end_src
+
+As you can see above, the ticket is labelled with the label =ihai=, to make it easy to find.
+
+**** Adding additional labels
+Running =ihai= with the =-L= option followed by one or more labels (whitespace separated) will add these new labels next to the =ihai= label.
 
 *** List all tickets created by ihai
 #+begin_src
@@ -50,9 +52,3 @@ It's good to know that =ihai= will always use a special label to distinguish its
 #+end_src
 This will output all existing ihai tickets which are not Done.
 
-** Configuring
-By default, =ihai= creates tickets with the label 'Idea'. If you want to change this, export an environment variable with your desired label, like so.
-#+begin_src
-  $ export IHAI_LABEL=MyLabel
-#+end_src
-You might want to add this to your profile so that it applies in the future.
