@@ -6,8 +6,7 @@
 
 ME=$(basename $0)
 JIRA_CONFIG=$HOME/.jira.d/config.yml
-IHAI_LABEL='ihai'
-
+IHAI_LABEL=${IHAI_LABEL:-'ihai'}
 
 usage() {
   cat<<-EOF
