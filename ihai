@@ -99,7 +99,13 @@ echo $status
 
 # --------------------------------------------------
 # Print branch-name for easy copy-pasta
-strippedSummary=$(echo $summary | tr -dc '[:alnum:]' | tr ' ' '-')
-echo ">> copy-pasta this to create a branch"
-echo "   git checkout -b ${key}-${strippedSummary}" | tr '[:upper:]' '[:lower:]'
+stripped_summary=$(echo $summary | tr -dc '[:alnum:]' | tr ' ' '-')
+git_checkout=$(echo "git checkout -b ${key}-${stripped_summary}" | tr '[:upper:]' '[:lower:]')
+echo ">> git branch name suggestion"
+echo "   $git_checkout"
+
+if which pbcopy > /dev/null; then
+  echo $git_checkout | pbcopy
+fi
+
 exit 0
