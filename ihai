@@ -4,6 +4,9 @@
 # Note: If the script doesn't run: the here-docs expect each line to
 # start with a tab. Your editor might have converted them to spaces.
 
+tmpfile=$(mktemp)
+trap "rm -f $tmpfile" 0
+
 ME=$(basename $0)
 JIRA_CONFIG=$HOME/.jira.d/config.yml
 IHAI_LABEL=${IHAI_LABEL:-'ihai'}
@@ -72,18 +75,31 @@ fi
 echo "Please enter a description, and exit with ctrl-d."
 description=$(cat)
 
-echo ">> Creating ticket:"
+echo -n ">> Creating ticket: "
 jira create $no_edit                       \
      --issuetype=Task                      \
      --override="summary:$summary"         \
-     --override="description:$description"
-[[ "$?" -ne 0 ]] && exit $?
+     --override="description:$description" > $tmpfile 2>&1
 
+read -r status key url < $tmpfile
+echo $status
+if [[ "$?" -ne 0 ]] ; then
+  cat $tmpfile
+  exit 1
+fi
 
 # --------------------------------------------------
 # Label ticket
 LABEL="$IHAI_LABEL $ADDITIONAL_LABEL"
-echo ">> Labelling ticket as '$LABEL':"
+echo -n ">> Labelling ticket as '$LABEL': "
 issue=$(jira list --limit=1 --sort='issue desc' | cut -d: -f1)
-jira labels set $issue $LABEL
-exit $?
+jira labels set $issue $LABEL > $tmpfile 2>&1
+echo $status
+
+
+# --------------------------------------------------
+# Print branch-name for easy copy-pasta
+strippedSummary=$(echo $summary | tr -dc '[:alnum:]' | tr ' ' '-')
+echo ">> copy-pasta this to create a branch"
+echo "   git checkout -b ${key}-${strippedSummary}" | tr '[:upper:]' '[:lower:]'
+exit 0
