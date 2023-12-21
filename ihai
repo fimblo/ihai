@@ -7,7 +7,7 @@
 # start with a tab. Your editor might have converted them to spaces.
 
 tmpfile=$(mktemp)
-trap "rm -f $tmpfile" 0
+trap 'rm -f "$tmpfile"' 0
 
 ME=$(basename $0)
 JIRA_CONFIG=$HOME/.jira.d/config.yml
@@ -43,7 +43,7 @@ if ! which jira > /dev/null 2>&1 ; then
 fi
 if ! [[ -e $JIRA_CONFIG ]] ; then
   echo "go-jira configuration not found."
-  exit $?
+  exit 1
 fi
 
 
@@ -61,7 +61,7 @@ done
 
 # --------------------------------------------------
 # Get ticket summary
-shift $(( $OPTIND - 1 ))
+shift $(( OPTIND - 1 ))
 summary="$*"
 if [[ -z "$summary" ]] ; then
   $0 -h
@@ -81,10 +81,11 @@ jira create --noedit                       \
      --issuetype=Task                      \
      --override="summary:$summary"         \
      --override="description:$description" > $tmpfile 2>&1
+exitcode=$?
 
-read -r status key url < $tmpfile
+read -r status key < $tmpfile
 echo $status
-if [[ "$?" -ne 0 ]] ; then
+if [[ "$exitcode" -ne 0 ]] ; then
   cat $tmpfile
   exit 1
 fi
