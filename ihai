@@ -47,10 +47,9 @@ fi
 
 # --------------------------------------------------
 # Parse arguments
-while getopts 'L:hln' tag ; do
+while getopts 'L:hl' tag ; do
   case $tag in
     l) list_tickets_then_exit     ;; # list ihai tickets in Jira
-    n) no_edit='--noedit'         ;; # run without opening editor
     L) ADDITIONAL_LABEL="$OPTARG" ;; # add additional labels
     h) usage 0                    ;;
    \?) usage 1                    ;;
@@ -76,7 +75,7 @@ echo "Please enter a description, and exit with ctrl-d."
 description=$(cat)
 
 echo -n ">> Creating ticket: "
-jira create $no_edit                       \
+jira create --noedit                       \
      --issuetype=Task                      \
      --override="summary:$summary"         \
      --override="description:$description" > $tmpfile 2>&1
