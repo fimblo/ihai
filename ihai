@@ -98,10 +98,10 @@ echo $status
 
 
 # --------------------------------------------------
-# Print branch-name for easy copy-pasta
-stripped_summary=$(echo $summary | tr -dc '[:alnum:]' | tr ' ' '-')
-git_checkout=$(echo "git checkout -b ${key}-${stripped_summary}" | tr '[:upper:]' '[:lower:]')
-echo ">> git branch name suggestion"
+# Print git checkout -b branch-name for easy copy-pasta
+stripped=$(echo ${key}-$summary | tr '[:upper:]' '[:lower:]' | tr -s ' ' '-')
+git_checkout="git checkout -b ${stripped}"
+echo ">> git branch name suggestion (copied to clipboard)"
 echo "   $git_checkout"
 
 if which pbcopy > /dev/null; then
