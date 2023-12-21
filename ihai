@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2086
+#
 # ihai - I have an idea! Create Jira ticket
 #
 # Note: If the script doesn't run: the here-docs expect each line to
