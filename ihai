@@ -24,7 +24,6 @@ usage() {
 	  -h    This help message
 	  -l    List all ihai tickets
 	  -L    Add additional labels (quoted space separated)
-	  -n    Do not edit the ticket description in your EDITOR
 	
 	EOF
   exit $1
