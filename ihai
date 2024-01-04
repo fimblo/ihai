@@ -82,7 +82,8 @@ jira create --noedit                       \
      --override="description:$description" > $tmpfile 2>&1
 exitcode=$?
 
-read -r status key < $tmpfile
+# shellcheck disable=SC2034
+read -r status key unusuedVar < $tmpfile
 echo $status
 if [[ "$exitcode" -ne 0 ]] ; then
   cat $tmpfile
