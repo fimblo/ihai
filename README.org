@@ -35,13 +35,13 @@ The script does not require escalated privileges.
   $ ihai This is a test ticket
   Please enter a description, and exit with ctrl-d.
   This is my ticket. Yay
-  >> Creating ticket:
-   OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
-  >> Labelling ticket as an 'ihai':
-  OK KEY-390 https://my-org.atlassian.net/browse/KEY-390
+>> Creating ticket: OK
+>> Labelling ticket as 'ihai ': OK
+>> git branch name suggestion (copied to clipboard)
+   git checkout -b key-1014-this-is-a-test-ticket
 #+end_src
 
-As you can see above, the ticket is labelled with the label =ihai=, to make it easy to find.
+As you can see above, the ticket is labelled with the label =ihai=, to make it easy to find. It also pastes a suggested branch name into your (mac) clipboard.
 
 **** Adding additional labels
 Running =ihai= with the =-L= option followed by one or more labels (whitespace separated) will add these new labels next to the =ihai= label.
